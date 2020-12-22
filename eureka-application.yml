@@ -1,0 +1,22 @@
+
+server:
+  port: 3000
+
+eureka:
+  server:
+    enable-self-preservation: false #关闭自我保护机制
+    eviction-interval-timer-in-ms: 4000 #设置清理间隔（毫秒 默认是60 * 1000 也就是60s）清理服务列表里面已经宕机的
+  instance:
+    hostname: eureka #主机名称
+  # eureka集群之间如何通信？ 靠的就是client 也就是说eureka 是server 也是client
+  # 做为server的时候 对外提供服务列表等 （疑惑：这里面是不是没有自己） ｜ 做为client时候 去寻找别的eureka 也是去拉去列表 所以别的eureka必须把自己做为client这个角色注册到自己身上
+  client:
+    register-with-eureka: true #不把自己做为一个客户端注册到自己身上 集群是true
+    fetch-registry: true #不需要从服务端获取注册信息（这里自己就是服务端，而且已经禁用自己注册自己了）集群是true｜意思是向别eureka拉取 其他eureka的信息？
+    service-url: #微服务要注册到的地址 http://localhost:3000/eureka
+      #defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka #单机情况
+      defaultZone: http://eureka1:3001/eureka,http://eureka2:3002/eureka #集群情况
+
+spring:
+  application:
+    name: eurekaServer #服务名称  eureka集群服务名称都是一致的
